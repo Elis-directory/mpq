@@ -12,6 +12,12 @@ struct ContentView: View {
     @State private var itemCount = ""
     @State private var itemDescription = ""
     
+    struct queuedItem {
+        var title = ""
+        var description = ""
+        var count = ""
+    }
+    
     
     var body: some View {
         ZStack {
@@ -34,11 +40,18 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $isSheetPresented) {
-            TextField("Title", text: $itemTitle).font(.system(size: 30)).padding()
+            HStack {
+                TextField("Title", text: $itemTitle).font(.system(size: 30)).padding()
+            }
             TextField("Count", text: $itemCount).font(.system(size: 30)).padding()
             TextField("Description", text: $itemDescription).font(.system(size: 30)).padding()
-        }.onTapGesture {
-            isSheetPresented.toggle()
+            Spacer()
+            Button(action: {
+                isSheetPresented.toggle()
+            }, label: {
+                Image(systemName: "chevron.up.circle.fill")
+                .font(.system(size: 60))
+            })
         }
        
     }
