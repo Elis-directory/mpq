@@ -13,10 +13,11 @@ extension Color {
         self.init(red: red, green: green, blue: blue)
     }
 }
+
 struct ContentView: View {
     @State private var isSheetPresented = false
     @State private var itemTitle = ""
-    @State private var itemCount = ""
+    @State private var itemUrgency = ""
     @State private var itemDescription = ""
     
     struct QueuedItem {
@@ -29,78 +30,97 @@ struct ContentView: View {
         
         func display() -> some View {
            
-                Text(title)
-                    .frame(width: CGFloat(containerWidth), height: CGFloat(containerHeight))
-                    .background(backgroundColor)
-                    
-                  
-           
+            Text(title)
+                .multilineTextAlignment(.leading)
+                .frame(width: CGFloat(containerWidth), height: CGFloat(containerHeight))
+                .background(backgroundColor)
         }
+
+
     }
     
     @State private var queuedItem = QueuedItem()
-    @State private var queuedItem2 = QueuedItem()// Create an instance
-    @State private var queuedItem3 = QueuedItem()// Create an instance
+
     let backgroundColor = Color(hex: 0xFFFFFF)
     let urgentColor = Color(hex: 0xE84258)
     let semiUrgentColor = Color(hex: 0xFEE191)
     let nonUrgentColor = Color(hex: 0xB0D8A4)
+    var cubeColor = Color(hex: 0xB0D8A4)
+    var containerWidth = 0.0
+    var containerHeight = 0.0
+    @State private var queuedItems: [QueuedItem] = []
+    
    
     
     var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                Text("MPQ")
-                    .font(.system(size: 60))
-                    .padding()
-                
-                queuedItem.display() .onAppear {
-                    queuedItem.containerWidth = Double(geometry.size.width) // Update containerWidth
-                    queuedItem.containerHeight = Double(geometry.size.height) * 0.1 // Update containerHeight
-                    queuedItem.backgroundColor = urgentColor
-                }
-                queuedItem2.display()
-                    .onAppear {
-                    queuedItem2.containerWidth = Double(geometry.size.width) // Update containerWidth
-                    queuedItem2.containerHeight = Double(geometry.size.height) * 0.1 // Update containerHeight
-                    queuedItem2.backgroundColor = semiUrgentColor
-                }
-                
-                queuedItem3.display()
-                    .onAppear {
-                    queuedItem3.containerWidth = Double(geometry.size.width) // Update containerWidth
-                    queuedItem3.containerHeight = Double(geometry.size.height) * 0.1 // Update containerHeight
-                    queuedItem3.backgroundColor = nonUrgentColor
-                }
-              
-                Spacer()
-                
-                VStack {
-                    Button(action: {
-                        isSheetPresented.toggle()
-                    }) {
-                        Image(systemName: "plus.app.fill")
-                            .font(.system(size: 60))
+      
+        let screenWidth = UIScreen.main.bounds.size.width
+        let screenHeight = UIScreen.main.bounds.size.height
+
+        VStack() {
+            Text("MPQ")
+                .font(.system(size: 60))
+                .multilineTextAlignment(.center)
+                .padding()
+            
+            ForEach(queuedItems.indices, id: \.self) { index in
+                queuedItems[index].display()
+                .onAppear {
+                    queuedItems[index].containerWidth = screenWidth
+                    queuedItems[index].containerHeight = screenHeight * 0.1
                     }
-                    .padding()
-                }
+               
+           
             }
+            Spacer()
+           
+                Button(action: {
+                    isSheetPresented.toggle()
+                }) {
+                    Image(systemName: "plus.app.fill")
+                        .font(.system(size: 60))
+                }
+                .padding()
+         
            
         }.background(backgroundColor)
         .sheet(isPresented: $isSheetPresented) {
+            
             VStack {
+               
                 TextField("Title", text: $itemTitle).font(.system(size: 30)).padding()
-                TextField("Count", text: $itemCount).font(.system(size: 30)).padding()
+                TextField("Urgency", text: $itemUrgency).font(.system(size: 30)).padding()
                 TextField("Description", text: $itemDescription).font(.system(size: 30)).padding()
+                
                 Spacer()
                 Button(action: {
                     isSheetPresented.toggle()
+                    
+                    var queuedItem = QueuedItem(title: itemTitle, description: itemDescription)
+                    if(itemUrgency == "1") {
+                        queuedItem.backgroundColor = urgentColor
+                       
+                    }
+                    
+                    if(itemUrgency == "2") {
+                        queuedItem.backgroundColor = semiUrgentColor
+                        
+                    }
+                    
+                    if(itemUrgency == "3") {
+                        queuedItem.backgroundColor = nonUrgentColor
+                        
+                    }
+                    queuedItems.append(queuedItem)
+                    
+                    
                 }, label: {
                     Image(systemName: "chevron.up.circle.fill")
                         .font(.system(size: 60))
                 })
             }
         }
+       
     }
 }
 
