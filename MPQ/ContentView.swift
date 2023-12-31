@@ -4,6 +4,8 @@
 //
 
 import SwiftUI
+
+// add ability to choose color by hex value
 extension Color {
     init(hex: UInt) {
         let red = Double((hex >> 16) & 0xFF) / 255.0
@@ -14,48 +16,60 @@ extension Color {
     }
 }
 
+struct QueuedItem {
+    var title = "Title"
+    var description = "Description"
+    var count = "Count"
+    var containerWidth = 0.0
+    var containerHeight = 0.0
+    var backgroundColor = Color.white
+    
+    func display() -> some View {
+        ZStack {
+            Rectangle()
+                .frame(width: CGFloat(containerWidth), height: CGFloat(containerHeight))
+                .foregroundColor(backgroundColor)
+                .cornerRadius(6.0)
+            Text(title)
+                .font(.title)
+                .fontWeight(.medium)
+                .foregroundColor(Color.white)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding()
+        }
+    }
+}
+
+
+// UI color pallete
+let urgentColor = Color(hex: 0xE84258)
+let semiUrgentColor = Color(hex: 0xFEE191)
+let nonUrgentColor = Color(hex: 0xB0D8A4)
+let backgroundColor = Color(hex: 0xFCFCFC)
+
+// screen dimensions
+let screenWidth = UIScreen.main.bounds.size.width
+let screenHeight = UIScreen.main.bounds.size.height
+var modalActive = true
+
+
+
+
 struct ContentView: View {
     @State private var isSheetPresented = false
+    @State private var isModalPresented = false
     @State private var itemTitle = ""
     @State private var itemUrgency = ""
     @State private var itemDescription = ""
-    
-    struct QueuedItem {
-        var title = "Title"
-        var description = "Description"
-        var count = "Count"
-        var containerWidth = 0.0
-        var containerHeight = 0.0
-        var backgroundColor = Color.white
-        
-        func display() -> some View {
-           
-            Text(title)
-                .multilineTextAlignment(.leading)
-                .frame(width: CGFloat(containerWidth), height: CGFloat(containerHeight))
-                .background(backgroundColor)
-        }
-
-
-    }
-    
     @State private var queuedItem = QueuedItem()
-
-    let backgroundColor = Color(hex: 0xFFFFFF)
-    let urgentColor = Color(hex: 0xE84258)
-    let semiUrgentColor = Color(hex: 0xFEE191)
-    let nonUrgentColor = Color(hex: 0xB0D8A4)
-    var cubeColor = Color(hex: 0xB0D8A4)
-    var containerWidth = 0.0
-    var containerHeight = 0.0
     @State private var queuedItems: [QueuedItem] = []
     
    
     
     var body: some View {
       
-        let screenWidth = UIScreen.main.bounds.size.width
-        let screenHeight = UIScreen.main.bounds.size.height
+      
 
         VStack() {
             Text("MPQ")
@@ -68,7 +82,20 @@ struct ContentView: View {
                 .onAppear {
                     queuedItems[index].containerWidth = screenWidth
                     queuedItems[index].containerHeight = screenHeight * 0.1
+                }.onTapGesture {
+                   
+                    
+                    if (modalActive) {
+                        queuedItems[index].containerWidth = screenWidth * 0.95
+                        queuedItems[index].containerHeight = screenHeight * 0.3
+                        modalActive = false
+                    } else {
+                        queuedItems[index].containerWidth = screenWidth
+                        queuedItems[index].containerHeight = screenHeight * 0.1
+                        modalActive = true
                     }
+                   
+                }
                
            
             }
@@ -83,7 +110,9 @@ struct ContentView: View {
                 .padding()
          
            
-        }.background(backgroundColor)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity) // 1
+        .background(backgroundColor)
         .sheet(isPresented: $isSheetPresented) {
             
             VStack {
@@ -104,7 +133,6 @@ struct ContentView: View {
                     
                     if(itemUrgency == "2") {
                         queuedItem.backgroundColor = semiUrgentColor
-                        
                     }
                     
                     if(itemUrgency == "3") {
