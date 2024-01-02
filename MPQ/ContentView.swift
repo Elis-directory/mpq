@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-// add ability to choose color by hex value
+// add ability to choose color by hex value on Color struct
 extension Color {
     init(hex: UInt) {
         let red = Double((hex >> 16) & 0xFF) / 255.0
@@ -15,6 +15,7 @@ extension Color {
         self.init(red: red, green: green, blue: blue)
     }
 }
+
 
 // struct repesenting element in queuw
 struct QueuedItem {
@@ -26,6 +27,8 @@ struct QueuedItem {
     var backgroundColor = Color.red
     var tapped = false;
     
+   
+    
     func display() -> some View {
         ZStack {
             Rectangle()
@@ -33,22 +36,37 @@ struct QueuedItem {
                 .foregroundColor(backgroundColor)
                 .cornerRadius(6.0)
             
-            
-            
             VStack {
-                Text(title)
-                    .font(.title)
-                    .fontWeight(.medium)
-                    .foregroundColor(Color(hex: 0x333333))
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                
+    
                 if(tapped) {
-                    Text(description)
-                        .font(.title)
+                    VStack {
+                        Text(title)
+                            .font(.largeTitle)
+                            .fontWeight(.medium)
+                            .foregroundColor(Color(hex: 0x333333))
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .offset(x: 10, y: -70)
+                            .underline()
+                            .padding()
+                        
+                        
+                        Text(description)
+                            .font(.headline)
+                            .fontWeight(.medium)
+                            .foregroundColor(Color(hex: 0x000033))
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: screenWidth * 0.85, alignment: .leading)
+                            .offset(x: 10, y: -75)
+                            .padding(.leading)
+                    }
+                } else {
+                    
+                    Text(title)
+                        .font(.largeTitle)
+//                        .system(size: 60)
                         .fontWeight(.medium)
-                        .foregroundColor(Color(hex: 0x000033))
+                        .foregroundColor(Color(hex: 0x333333))
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
@@ -77,13 +95,21 @@ var modalActive = true
 struct ContentView: View {
     @State private var isSheetPresented = false
     @State private var isModalPresented = false
+    @State private var darkenUrgent = false
+    @State private var darkenSemiUrgent = false
+    @State private var darkenNonUrgent = false
+    
+    
     @State private var itemTitle = ""
     @State private var itemUrgency = ""
     @State private var itemDescription = ""
+    
     @State private var queuedItem = QueuedItem()
     @State private var queuedItems: [QueuedItem] = []
+    
     @State private var selectedDurationIndex = 0
     @State private var selectedUrgencyIndex = 0
+   
     
     let urgencies = ["Urgent", "Semi-urgent", "Non-urgent"]
     let durations = ["1 hour", "3 hours", "6 hours", "12 hours", "24 hours"]
@@ -94,6 +120,9 @@ struct ContentView: View {
                 Image("Logo2").resizable()
                     .frame(width: screenWidth, height: screenHeight * 0.2)
                     .offset(y: screenHeight * -0.3)
+                
+                Text("Up to 12 items!")
+                
                 VStack {
                     Rectangle()
                         .foregroundColor(Color.blue.opacity(0))
@@ -135,21 +164,19 @@ struct ContentView: View {
                     }
                     .padding()
                 }
-
                 
             }
-        
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(backgroundColor)
-        .sheet(isPresented: $isSheetPresented) {
-            VStack {
-                TextField("Title", text: $itemTitle).font(.system(size: 30)).padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(backgroundColor)
+            .sheet(isPresented: $isSheetPresented) {
+                VStack {
+                    TextField("Title", text: $itemTitle).font(.system(size: 30)).padding()
                 
-                TextField("Description", text: $itemDescription).font(.system(size: 30)).padding()
+                    TextField("Description", text: $itemDescription).font(.system(size: 30)).padding()
                    
                 
-                HStack {
-                    Text("Duration").font(.system(size:30)).foregroundColor(Color(hex: 0xFFC7C7CC))
+                    HStack {
+                        Text("Duration").font(.system(size:30)).foregroundColor(Color(hex: 0xFFC7C7CC))
                               Spacer()
                               Picker(selection: $selectedDurationIndex, label: Text("Duration")) {
                                   ForEach(0..<durations.count, id: \.self) { index in
@@ -160,49 +187,70 @@ struct ContentView: View {
                               .frame(width: 120)
                           }
                           .padding()
-              
+    
                 
-                
-                HStack {
-                    Text("Urgency")
-                        .font(.system(size: 30))
-                        .foregroundColor(Color(hex: 0xFFC7C7CC))
+                    HStack {
+                        Text("Urgency")
+                            .font(.system(size: 30))
+                            .foregroundColor(Color(hex: 0xFFC7C7CC))
                                
                     Spacer()
-                    
-                               
+                   
                     HStack(spacing: 10) {
                         Rectangle()
                             .fill(urgentColor)
-                            .frame(width: 30, height: 30)
-                            .onTapGesture {
-                                selectedUrgencyIndex = 0
-                                
-                            }
-                        
+                            .frame(width: screenWidth * 0.075, height: screenHeight * 0.035)
+                                   .opacity(darkenUrgent ? 0.5 : 1.0) // Darken by
+                                   .onTapGesture {
+                                       
+                                       darkenUrgent = true
+                                       
+                                       // Reset the darkening effect after a delay
+                                       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                           darkenUrgent = false
+                                       }
+                                       
+                                       selectedUrgencyIndex = 0
+                                   }
                         
                         Rectangle()
                             .fill(semiUrgentColor)
-                            .frame(width: 30, height: 30)
-                            .onTapGesture {
-                                selectedUrgencyIndex = 1
-                            }
+                            .frame(width: screenWidth * 0.075, height: screenHeight * 0.035)
+                                   .opacity(darkenSemiUrgent ? 0.5 : 1.0) // Darken by
+                                   .onTapGesture {
+                                       
+                                       darkenSemiUrgent = true
+                                       
+                                       // Reset the darkening effect after a delay
+                                       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                           darkenSemiUrgent = false
+                                       }
+                                       
+                                       selectedUrgencyIndex = 1
+                                   }
                         
                         Rectangle()
                             .fill(nonUrgentColor)
-                            .frame(width: 30, height: 30)
-                            .onTapGesture {
-                                selectedUrgencyIndex = 2
+                            .frame(width: screenWidth * 0.075, height: screenHeight * 0.035)
+                                   .opacity(darkenNonUrgent ? 0.5 : 1.0) // Darken by
+                                   .onTapGesture {
+                                       
+                                       darkenNonUrgent = true
+                                       
+                                      
+                                       DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                           darkenNonUrgent = false
+                                       }
+                                       
+                                       selectedUrgencyIndex = 2
                             }
+                        
+                        
                     }
                                
                     }
                     .padding()
-               
-               
-
-               
-               
+         
             
                 Spacer()
                 Button(action: {
