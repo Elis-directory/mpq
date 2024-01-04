@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Name 1",
+    "job": "Web backend developer",
+    "email": "name1@gmail.com"
+  },
+  {
+    "name": "Name 2",
+    "job": "UI UX Designer",
+    "email": "name2@gmail.com"
+  },
+  {
+    "name": "name 3",
+    "job": "ios developer",
+    "email": "name3@gmail.com"
+  },
+  {
+    "name": "name 4",
+    "job": "web designer",
+    "email": "name4@gmail.com"
+  },
+  
+]
