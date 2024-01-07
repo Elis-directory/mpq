@@ -11,7 +11,6 @@
 		A9F05F882B3BE5DD003BE254 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F05F872B3BE5DD003BE254 /* ContentView.swift */; };
 		A9F05F8A2B3BE5E0003BE254 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9F05F892B3BE5E0003BE254 /* Assets.xcassets */; };
 		A9F05F8D2B3BE5E0003BE254 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9F05F8C2B3BE5E0003BE254 /* Preview Assets.xcassets */; };
-		A9F05F942B473657003BE254 /* data.json in Resources */ = {isa = PBXBuildFile; fileRef = A9F05F932B473657003BE254 /* data.json */; };
 		A9F05F962B47367D003BE254 /* ReadJsonData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F05F952B47367D003BE254 /* ReadJsonData.swift */; };
 /* End PBXBuildFile section */
 
@@ -21,7 +20,6 @@
 		A9F05F872B3BE5DD003BE254 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A9F05F892B3BE5E0003BE254 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A9F05F8C2B3BE5E0003BE254 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		A9F05F932B473657003BE254 /* data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data.json; sourceTree = "<group>"; };
 		A9F05F952B47367D003BE254 /* ReadJsonData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ReadJsonData.swift; path = ../../../../Downloads/ReadJsonData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -59,7 +57,6 @@
 				A9F05F872B3BE5DD003BE254 /* ContentView.swift */,
 				A9F05F892B3BE5E0003BE254 /* Assets.xcassets */,
 				A9F05F952B47367D003BE254 /* ReadJsonData.swift */,
-				A9F05F932B473657003BE254 /* data.json */,
 				A9F05F8B2B3BE5E0003BE254 /* Preview Content */,
 			);
 			path = MPQ;
@@ -132,7 +129,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9F05F8D2B3BE5E0003BE254 /* Preview Assets.xcassets in Resources */,
-				A9F05F942B473657003BE254 /* data.json in Resources */,
 				A9F05F8A2B3BE5E0003BE254 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

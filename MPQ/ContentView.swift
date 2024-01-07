@@ -16,18 +16,46 @@ extension Color {
     }
 }
 
+// struct for adding outline color to text
+struct StrokeText: View {
+    let text: String
+    let width: CGFloat
+    let outerColor: Color
+    let innerColor: Color
 
+    var body: some View {
+        ZStack {
+            ZStack {
+                Text(text)
+                    .offset(x: width, y: width)
+                    .foregroundColor(outerColor)
+                Text(text)
+                    .offset(x: -width, y: -width)
+                    .foregroundColor(outerColor)
+                Text(text)
+                    .offset(x: -width, y: width)
+                    .foregroundColor(outerColor)
+                Text(text)
+                    .offset(x: width, y: -width)
+                    .foregroundColor(outerColor)
+            }
+            .foregroundColor(outerColor)
+            Text(text)
+                .foregroundColor(innerColor)
+        }
+    }
+}
 // struct repesenting element in queuw
 struct QueuedItem {
     var title = "Title"
     var description = "Description"
-    var count = "Count"
+    var urgencyIndex = -1
+    var durationIndex = 0
     var containerWidth = 0.0
     var containerHeight = 0.0
     var backgroundColor = Color.red
     var tapped = false;
     
-   
     
     func display() -> some View {
         ZStack {
@@ -40,33 +68,51 @@ struct QueuedItem {
     
                 if(tapped) {
                     VStack {
-                        Text(title)
+                        StrokeText(text: title, width: 0.5, outerColor: .black, innerColor: Color(hex: 0xFCFCFC))
                             .font(.largeTitle)
-                            .fontWeight(.medium)
-                            .foregroundColor(Color(hex: 0x333333))
+                            .foregroundColor(Color(hex: 0xFCFCFC)) // Inner color
                             .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .offset(x: 10, y: -70)
-                            .underline()
+                            .offset(x: screenWidth * -0.05, y: screenHeight * 0.0075)
+                            
                             .padding()
-                        
-                        
-                        Text(description)
-                            .font(.headline)
-                            .fontWeight(.medium)
-                            .foregroundColor(Color(hex: 0x000033))
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: screenWidth * 0.85, alignment: .leading)
-                            .offset(x: 10, y: -75)
+
+
+                        Rectangle()
+                            .foregroundColor(Color.blue.opacity(0))
+                            .frame(width: screenWidth, height: screenHeight * 0.01)
+                            .alignmentGuide(.top) { _ in
+                                  screenHeight * 0.25
+                              }
+//                            .offset(y: screenHeight * -0.1)
+//                        Color(hex: 0xFCFCFC)
+                       
+                        ZStack {
+                            Rectangle()
+                                .frame(width: screenWidth * 0.9, height: screenHeight * 0.1)
+                                .foregroundColor(Color(hex: 0xFCFCFC))
+                                
+                            
+                            Text(description)
+                                .font(.headline)
+                                .fontWeight(.medium)
+                                .foregroundColor(Color(hex: 0x000033))
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: screenWidth * 0.8, minHeight: screenHeight * 0.045, alignment: .leading)
+                                .offset(x: screenWidth * -0.025, y: screenHeight * -0.025)
+                                .lineLimit(5) // Allow text to display multiple lines
                             .padding(.leading)
-                    }
+                        }.offset(y: screenHeight * -0.025)
+                        
+                          
+                    }.frame(maxWidth: screenWidth * 0.8)
                 } else {
                     
-                    Text(title)
+                    StrokeText(text: title, width: 0.5, outerColor: .black, innerColor: Color(hex: 0xFCFCFC))
                         .font(.largeTitle)
 //                        .system(size: 60)
-                        .fontWeight(.medium)
-                        .foregroundColor(Color(hex: 0x333333))
+                       
+                        
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
@@ -117,9 +163,14 @@ struct ContentView: View {
     // User View
     var body: some View {
             ZStack {
-                Image("Logo2").resizable()
-                    .frame(width: screenWidth, height: screenHeight * 0.2)
-                    .offset(y: screenHeight * -0.3)
+//                Image("Logo2").resizable()
+//                    .frame(width: screenWidth, height: screenHeight * 0.2)
+//                    .offset(y: screenHeight * -0.3)
+//                
+                
+                Image("Logo").resizable()
+                    .frame(width: screenWidth, height: screenHeight * 0.4)
+                    .offset(y: screenHeight * -0.2)
                 
                 Text("Up to 12 items!")
                 
@@ -135,17 +186,17 @@ struct ContentView: View {
                         ForEach(queuedItems.indices, id: \.self) { index in
                             queuedItems[index].display()
                                 .onAppear {
-                                    queuedItems[index].containerWidth = screenWidth
+                                    queuedItems[index].containerWidth = screenWidth * 0.99
                                     queuedItems[index].containerHeight = screenHeight * 0.1
                                 }
                                 .onTapGesture {
                                     if modalActive {
-                                        queuedItems[index].containerWidth = screenWidth * 0.95
-                                        queuedItems[index].containerHeight = screenHeight * 0.3
+                                        queuedItems[index].containerWidth = screenWidth * 0.96
+                                        queuedItems[index].containerHeight = screenHeight * 0.2
                                         modalActive = false
                                         queuedItems[index].tapped = true
                                     } else {
-                                        queuedItems[index].containerWidth = screenWidth
+                                        queuedItems[index].containerWidth = screenWidth * 0.99
                                         queuedItems[index].containerHeight = screenHeight * 0.1
                                         modalActive = true
                                         queuedItems[index].tapped = false
@@ -256,9 +307,10 @@ struct ContentView: View {
                 Button(action: {
                     isSheetPresented.toggle()
                     
-                    var queuedItem = QueuedItem(title: itemTitle, description: itemDescription)
+                    var queuedItem = QueuedItem(title: itemTitle, description: itemDescription, urgencyIndex: selectedUrgencyIndex, durationIndex: selectedDurationIndex)
                     if(selectedUrgencyIndex == 0) {
                         queuedItem.backgroundColor = urgentColor
+                        
                        
                     }
                     
