@@ -1,4 +1,4 @@
-**In Progress**
+**Note: This app is not complete and therefore still in Progress of bieng built**
 
 # MPQ App
 
