@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 // add ability to choose color by hex value on Color struct
 extension Color {
@@ -45,17 +46,115 @@ struct StrokeText: View {
         }
     }
 }
+
+func checkTimeUp(minutes: Double) -> Bool {
+        let delayInSeconds = minutes * 60.0 // Convert minutes to seconds
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
+            print("Time's up after \(minutes) minutes")
+            // Perform any action here when the time is up
+        }
+
+        return true
+    }
+
+
+
+
 // struct repesenting element in queuw
 struct QueuedItem {
-    var title = "Title"
-    var description = "Description"
-    var urgencyIndex = -1
+    var title = ""
+    var description = ""
+    var urgencyIndex = 0
     var durationIndex = 0
+    var alarm = 0
+    var count = 0
+    
     var containerWidth = 0.0
     var containerHeight = 0.0
+    
     var backgroundColor = Color.red
     var tapped = false;
     
+    var durations = ["1 min", "3 hours", "6 hours", "12 hours", "24 hours"]
+    
+    var times = [
+        "1 min": 60,
+        "3 hours": 180,
+        "6 hours": 360,
+        "12 hours": 720,
+        "24 hours": 1440
+    ]
+    
+    
+//    mutating func update() {
+//        
+//            switch urgencyIndex {
+//            case 0:
+//                alarm = times[durations[durationIndex]]! / 3
+//                if checkTimeUp(minutes: Double(alarm)) {
+//                    urgencyIndex = 1
+//                }
+//            case 1:
+//                alarm = times[durations[durationIndex]]! / 2
+//                if checkTimeUp(minutes: Double(alarm)) {
+//                    urgencyIndex = 2
+//                }
+//            case 2:
+//                print("checking green")
+//                alarm = times[durations[durationIndex]]!
+//                print(alarm)
+//                if checkTimeUp(minutes: Double(alarm)) {
+//                    print("Done!")
+//                }
+//            default:
+//                break
+//            }
+//        }
+
+        
+    
+//    func checkTimeUp(minutes: Double) -> Bool {
+//        let delayInSeconds = minutes * 60.0 // Convert minutes to seconds
+//        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
+//            print("Time's up after \(minutes) minutes")
+//            // Perform any action here when the time is up
+//        }
+//        
+//        return true
+//    }
+//    
+//    func checkUrgencyState() -> Int {
+//        return urgencyIndex
+//    }
+    
+//    mutating func prioritize() {
+//        if(urgencyIndex == 0) {
+//            alarm = times[durations[durationIndex]]! / 3
+//            if (checkTimeUp(minutes: Double(alarm))) {
+//                urgencyIndex = 1
+//            }
+//            
+//            
+//           
+//        }
+//        
+//        if(urgencyIndex == 1) {
+//            alarm = times[durations[durationIndex]]! / 2
+//            if (checkTimeUp(minutes: Double(alarm))) {
+//                urgencyIndex = 2
+//            }
+//        }
+//        
+//        if(urgencyIndex == 2) {
+//            alarm = times[durations[durationIndex]]!
+//            if(checkTimeUp(minutes: Double(alarm))) {
+//                title = "Done"
+//            }
+//            
+//        }
+//    }
     
     func display() -> some View {
         ZStack {
@@ -158,10 +257,48 @@ struct ContentView: View {
    
     
     let urgencies = ["Urgent", "Semi-urgent", "Non-urgent"]
-    let durations = ["1 hour", "3 hours", "6 hours", "12 hours", "24 hours"]
+    let durations = ["1 min", "3 hours", "6 hours", "12 hours", "24 hours"]
+    @State var alarm = 0
+    
+    var times = [
+        "1 min": 60,
+        "3 hours": 180,
+        "6 hours": 360,
+        "12 hours": 720,
+        "24 hours": 1440
+    ]
+    
+    func startItemUpdateTimer() {
+            print("timer starting")
+            // Update the queued items here
+            for index in queuedItems.indices {
+                print("looping")
+                switch queuedItems[index].urgencyIndex {
+                case 0:
+                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 3)), repeats: false) { _ in
+                        queuedItems[index].urgencyIndex = 1
+                    }
+                    // Store the timer in case you need to invalidate it later
+                    // You might want to store the timers in an array if needed
+                case 1:
+                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 2)), repeats: false) { _ in
+                        queuedItems[index].urgencyIndex = 2
+                    }
+                case 2:
+                    print("checking green")
+                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]!)), repeats: false) { _ in
+                        print("Done!")
+                    }
+                default:
+                    break
+                }
+                // Store the timers if needed
+            }
+        }
     
     // User View
     var body: some View {
+        
             ZStack {
 //                Image("Logo2").resizable()
 //                    .frame(width: screenWidth, height: screenHeight * 0.2)
@@ -183,7 +320,14 @@ struct ContentView: View {
                           }
                     
                     ScrollView {
+                        
+                        
+                       
+                            
                         ForEach(queuedItems.indices, id: \.self) { index in
+                            
+                          
+                            
                             queuedItems[index].display()
                                 .onAppear {
                                     queuedItems[index].containerWidth = screenWidth * 0.99
@@ -204,9 +348,67 @@ struct ContentView: View {
                                 }
                         }
                     }
+                    .onAppear {
+                        
+                        let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(10), repeats: true) { _ in
+                                       startItemUpdateTimer()
+                                   }
+                        
+//                        let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(10, repeats: false) { _ in
+//
+//                        })
+                    }
                     
                     Spacer()
+                        
+                                                // Update the queued items here
+//                                                for index in queuedItems.indices {
+//                                                       
+//                                                    switch queuedItems[index].urgencyIndex {
+//                                                    case 0:
+//                                                        var timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 3)), repeats: false) { _ in
+//                                                            queuedItems[index].urgencyIndex = 1
+//                                                        }
+//                                                        
+////                                                        alarm =
+////                                                        if checkTimeUp(minutes: Double(alarm)) {
+////
+////                                                        }
+//                                                    case 1:
+//                                                        var timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 2)), repeats: false) { _ in
+//                                                            queuedItems[index].urgencyIndex = 2
+//                                                        }
+//                                                    case 2:
+//                                                        print("checking green")
+//                                                        var timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]!)), repeats: false) { _ in
+//                                                            
+//                                                            print("Done!")
+//                                                        }
+////
+////                                                        alarm = times[durations[queuedItems[index].durationIndex]]!
+////                                                        print(alarm)
+////                                                        if checkTimeUp(minutes: Double(alarm)) {
+////                                                            print("Done!")
+////                                                        }
+//                                                    default:
+//                                                        break
+//                                                    }
+//                                                    
+//                                                   
+//                                            }
+                                     //   }
+//                        .onAppear {
+//                        var timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+//                            // Update the queued items here
+//                            for index in queuedItems.indices {
+//                                   queuedItems[index].update()
+//                               }
+//                        }
+//                    }
                     
+                        
+                            
+                        
                     Button(action: {
                         isSheetPresented.toggle()
                     }) {
@@ -236,6 +438,7 @@ struct ContentView: View {
                               }
                               .pickerStyle(MenuPickerStyle())
                               .frame(width: 120)
+                            
                           }
                           .padding()
     
@@ -308,20 +511,21 @@ struct ContentView: View {
                     isSheetPresented.toggle()
                     
                     var queuedItem = QueuedItem(title: itemTitle, description: itemDescription, urgencyIndex: selectedUrgencyIndex, durationIndex: selectedDurationIndex)
-                    if(selectedUrgencyIndex == 0) {
-                        queuedItem.backgroundColor = urgentColor
-                        
+                    //queuedItem.prioritize()
+
+                    switch selectedUrgencyIndex {
+                        case 0:
+                            queuedItem.backgroundColor = urgentColor
+                        case 1:
+                          
+                            queuedItem.backgroundColor = semiUrgentColor
+                        case 2:
+                            
+                            queuedItem.backgroundColor = nonUrgentColor
+                        default:
+                            break
+                    }
                        
-                    }
-                    
-                    if(selectedUrgencyIndex == 1) {
-                        queuedItem.backgroundColor = semiUrgentColor
-                    }
-                    
-                    if(selectedUrgencyIndex == 2) {
-                        queuedItem.backgroundColor = nonUrgentColor
-                        
-                    }
                     queuedItems.append(queuedItem)
                     
                     
@@ -333,6 +537,7 @@ struct ContentView: View {
         }
        
     }
+   
 }
 
 #Preview {
