@@ -6,6 +6,20 @@
 import SwiftUI
 import Foundation
 
+
+// UI color pallete
+var urgentColor = Color(hex: 0xE84258)
+var semiUrgentColor = Color(hex: 0xFEE191)
+var nonUrgentColor = Color(hex: 0xB0D8A4)
+var backgroundColor = Color(hex: 0xFCFCFC)
+
+// screen dimensions
+let screenWidth = UIScreen.main.bounds.size.width
+let screenHeight = UIScreen.main.bounds.size.height
+
+
+
+
 // add ability to choose color by hex value on Color struct
 extension Color {
     init(hex: UInt) {
@@ -47,150 +61,58 @@ struct StrokeText: View {
     }
 }
 
-func checkTimeUp(minutes: Double) -> Bool {
-        let delayInSeconds = minutes * 60.0 // Convert minutes to seconds
+func colorPicker(index: Int) -> Color {
+    
+    var backgroundColor: Color
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
-            print("Time's up after \(minutes) minutes")
-            // Perform any action here when the time is up
-        }
-
-        return true
+    if index == 0 {
+       
+        backgroundColor = urgentColor
+    } else if index == 1 {
+        backgroundColor = semiUrgentColor
+    } else if index == 2 {
+        backgroundColor = nonUrgentColor
+    } else {
+        backgroundColor = .white
+        print("Background Color Error!")
     }
+    
+    return backgroundColor
+    
+   
+}
 
 
 
+func display(containerWidth: Float, containerHeight: Float, tapped:  Binding<Bool>, title: String, description: String, backgroundColor: Color ) -> some View {
+   
 
-// struct repesenting element in queuw
-struct QueuedItem {
-    var title = ""
-    var description = ""
-    var urgencyIndex = 0
-    var durationIndex = 0
-    var alarm = 0
-    var count = 0
     
-    var containerWidth = 0.0
-    var containerHeight = 0.0
-    
-    var backgroundColor = Color.red
-    var tapped = false;
-    
-    var durations = ["1 min", "3 hours", "6 hours", "12 hours", "24 hours"]
-    
-    var times = [
-        "1 min": 60,
-        "3 hours": 180,
-        "6 hours": 360,
-        "12 hours": 720,
-        "24 hours": 1440
-    ]
-    
-    
-//    mutating func update() {
-//        
-//            switch urgencyIndex {
-//            case 0:
-//                alarm = times[durations[durationIndex]]! / 3
-//                if checkTimeUp(minutes: Double(alarm)) {
-//                    urgencyIndex = 1
-//                }
-//            case 1:
-//                alarm = times[durations[durationIndex]]! / 2
-//                if checkTimeUp(minutes: Double(alarm)) {
-//                    urgencyIndex = 2
-//                }
-//            case 2:
-//                print("checking green")
-//                alarm = times[durations[durationIndex]]!
-//                print(alarm)
-//                if checkTimeUp(minutes: Double(alarm)) {
-//                    print("Done!")
-//                }
-//            default:
-//                break
-//            }
-//        }
+        VStack {
 
-        
-    
-//    func checkTimeUp(minutes: Double) -> Bool {
-//        let delayInSeconds = minutes * 60.0 // Convert minutes to seconds
-//        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
-//            print("Time's up after \(minutes) minutes")
-//            // Perform any action here when the time is up
-//        }
-//        
-//        return true
-//    }
-//    
-//    func checkUrgencyState() -> Int {
-//        return urgencyIndex
-//    }
-    
-//    mutating func prioritize() {
-//        if(urgencyIndex == 0) {
-//            alarm = times[durations[durationIndex]]! / 3
-//            if (checkTimeUp(minutes: Double(alarm))) {
-//                urgencyIndex = 1
-//            }
-//            
-//            
-//           
-//        }
-//        
-//        if(urgencyIndex == 1) {
-//            alarm = times[durations[durationIndex]]! / 2
-//            if (checkTimeUp(minutes: Double(alarm))) {
-//                urgencyIndex = 2
-//            }
-//        }
-//        
-//        if(urgencyIndex == 2) {
-//            alarm = times[durations[durationIndex]]!
-//            if(checkTimeUp(minutes: Double(alarm))) {
-//                title = "Done"
-//            }
-//            
-//        }
-//    }
-    
-    func display() -> some View {
-        ZStack {
-            Rectangle()
-                .frame(width: CGFloat(containerWidth), height: CGFloat(containerHeight))
-                .foregroundColor(backgroundColor)
-                .cornerRadius(6.0)
-            
-            VStack {
-    
-                if(tapped) {
+            if(tapped.wrappedValue) {
+                
+                ZStack {
+                      
+                 
+                        Rectangle()
+                        .frame(width: CGFloat(containerWidth), height: CGFloat(containerHeight * 2))
+                            .foregroundColor(backgroundColor)
+                            .cornerRadius(6.0)
                     VStack {
                         StrokeText(text: title, width: 0.5, outerColor: .black, innerColor: Color(hex: 0xFCFCFC))
                             .font(.largeTitle)
-                            .foregroundColor(Color(hex: 0xFCFCFC)) // Inner color
                             .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .offset(x: screenWidth * -0.05, y: screenHeight * 0.0075)
-                            
                             .padding()
-
-
-                        Rectangle()
-                            .foregroundColor(Color.blue.opacity(0))
-                            .frame(width: screenWidth, height: screenHeight * 0.01)
-                            .alignmentGuide(.top) { _ in
-                                  screenHeight * 0.25
-                              }
-//                            .offset(y: screenHeight * -0.1)
-//                        Color(hex: 0xFCFCFC)
-                       
+                        
+                        
                         ZStack {
                             Rectangle()
-                                .frame(width: screenWidth * 0.9, height: screenHeight * 0.1)
+                                .frame(width: screenWidth * 0.9, height: screenHeight * 0.125)
                                 .foregroundColor(Color(hex: 0xFCFCFC))
-                                
+                                .offset(y: screenHeight * -0.025)
+                            
                             
                             Text(description)
                                 .font(.headline)
@@ -200,40 +122,155 @@ struct QueuedItem {
                                 .frame(maxWidth: screenWidth * 0.8, minHeight: screenHeight * 0.045, alignment: .leading)
                                 .offset(x: screenWidth * -0.025, y: screenHeight * -0.025)
                                 .lineLimit(5) // Allow text to display multiple lines
-                            .padding(.leading)
-                        }.offset(y: screenHeight * -0.025)
-                        
-                          
-                    }.frame(maxWidth: screenWidth * 0.8)
-                } else {
+                                .padding(.leading)
+                        }
+                    }
+                      
+                }
+            } else {
+      
+                ZStack {
                     
+                    Rectangle()
+                        .frame(width: CGFloat(containerWidth), height: CGFloat(containerHeight))
+                        .foregroundColor(backgroundColor)
+                        .cornerRadius(6.0)
                     StrokeText(text: title, width: 0.5, outerColor: .black, innerColor: Color(hex: 0xFCFCFC))
                         .font(.largeTitle)
-//                        .system(size: 60)
-                       
-                        
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
+               
                 }
                 
             }
             
         }
+        
     }
+
+
+
+//var durations = ["1 min", "3 hours", "6 hours", "12 hours", "24 hours"]
+//
+//var times = [
+//    "1 min": 60,
+//    "3 hours": 180,
+//    "6 hours": 360,
+//    "12 hours": 720,
+//    "24 hours": 1440
+//]
+
+
+// struct repesenting element in queuw
+class QueuedItem {
+    var title: String?
+    var description: String?
+    var urgencyIndex: Int?
+    var durationIndex: Int?
+    
+    
+    var containerWidth: Double?
+    var containerHeight: Double?
+    
+    var backgroundColor:Color?
+    
+    init(title: String? = nil, description: String? = nil, urgencyIndex: Int? = nil, durationIndex: Int? = nil, containerWidth: Double? = nil, containerHeight: Double? = nil) {
+        self.title = title
+        self.description = description
+        self.urgencyIndex = urgencyIndex
+        self.durationIndex = durationIndex
+        self.containerWidth = containerWidth
+        self.containerHeight = containerHeight
+    }
+    
+    
+    
+    //    mutating func update() {
+    //
+    //            switch urgencyIndex {
+    //            case 0:
+    //                alarm = times[durations[durationIndex]]! / 3
+    //                if checkTimeUp(minutes: Double(alarm)) {
+    //                    urgencyIndex = 1
+    //                }
+    //            case 1:
+    //                alarm = times[durations[durationIndex]]! / 2
+    //                if checkTimeUp(minutes: Double(alarm)) {
+    //                    urgencyIndex = 2
+    //                }
+    //            case 2:
+    //                print("checking green")
+    //                alarm = times[durations[durationIndex]]!
+    //                print(alarm)
+    //                if checkTimeUp(minutes: Double(alarm)) {
+    //                    print("Done!")
+    //                }
+    //            default:
+    //                break
+    //            }
+    //        }
+    
+    
+    
+    
+    
+    //    mutating func prioritize() {
+    //        if(urgencyIndex == 0) {
+    //            alarm = times[durations[durationIndex]]! / 3
+    //            if (checkTimeUp(minutes: Double(alarm))) {
+    //                urgencyIndex = 1
+    //            }
+    //
+    //
+    //
+    //        }
+    //
+    //        if(urgencyIndex == 1) {
+    //            alarm = times[durations[durationIndex]]! / 2
+    //            if (checkTimeUp(minutes: Double(alarm))) {
+    //                urgencyIndex = 2
+    //            }
+    //        }
+    //
+    //        if(urgencyIndex == 2) {
+    //            alarm = times[durations[durationIndex]]!
+    //            if(checkTimeUp(minutes: Double(alarm))) {
+    //                title = "Done"
+    //            }
+    //
+    //        }
+    //    }
+    
+//    func startItemUpdateTimer() {
+//            print("timer starting")
+//            // Update the queued items here
+//            for index in queuedItems.indices {
+//                print("looping")
+//                switch queuedItems[index].urgencyIndex {
+//                case 0:
+//                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 3)), repeats: false) { _ in
+//                        queuedItems[index].urgencyIndex = 1
+//                    }
+//                    // Store the timer in case you need to invalidate it later
+//                    // You might want to store the timers in an array if needed
+//                case 1:
+//                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 2)), repeats: false) { _ in
+//                        queuedItems[index].urgencyIndex = 2
+//                    }
+//                case 2:
+//                    print("checking green")
+//                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]!)), repeats: false) { _ in
+//                        print("Done!")
+//                    }
+//                default:
+//                    break
+//                }
+//                // Store the timers if needed
+//            }
+//        }
+    
 }
-
-
-// UI color pallete
-var urgentColor = Color(hex: 0xE84258)
-var semiUrgentColor = Color(hex: 0xFEE191)
-var nonUrgentColor = Color(hex: 0xB0D8A4)
-var backgroundColor = Color(hex: 0xFCFCFC)
-
-// screen dimensions
-let screenWidth = UIScreen.main.bounds.size.width
-let screenHeight = UIScreen.main.bounds.size.height
-var modalActive = true
 
 
 
@@ -243,6 +280,7 @@ struct ContentView: View {
     @State private var darkenUrgent = false
     @State private var darkenSemiUrgent = false
     @State private var darkenNonUrgent = false
+    @State private var isTapped = false
     
     
     @State private var itemTitle = ""
@@ -254,11 +292,13 @@ struct ContentView: View {
     
     @State private var selectedDurationIndex = 0
     @State private var selectedUrgencyIndex = 0
+    @State var alarm = 0
+   
    
     
     let urgencies = ["Urgent", "Semi-urgent", "Non-urgent"]
     let durations = ["1 min", "3 hours", "6 hours", "12 hours", "24 hours"]
-    @State var alarm = 0
+    
     
     var times = [
         "1 min": 60,
@@ -268,33 +308,7 @@ struct ContentView: View {
         "24 hours": 1440
     ]
     
-    func startItemUpdateTimer() {
-            print("timer starting")
-            // Update the queued items here
-            for index in queuedItems.indices {
-                print("looping")
-                switch queuedItems[index].urgencyIndex {
-                case 0:
-                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 3)), repeats: false) { _ in
-                        queuedItems[index].urgencyIndex = 1
-                    }
-                    // Store the timer in case you need to invalidate it later
-                    // You might want to store the timers in an array if needed
-                case 1:
-                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 2)), repeats: false) { _ in
-                        queuedItems[index].urgencyIndex = 2
-                    }
-                case 2:
-                    print("checking green")
-                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]!)), repeats: false) { _ in
-                        print("Done!")
-                    }
-                default:
-                    break
-                }
-                // Store the timers if needed
-            }
-        }
+   
     
     // User View
     var body: some View {
@@ -321,45 +335,31 @@ struct ContentView: View {
                     
                     ScrollView {
                         
-                        
-                       
                             
                         ForEach(queuedItems.indices, id: \.self) { index in
                             
                           
                             
-                            queuedItems[index].display()
-                                .onAppear {
-                                    queuedItems[index].containerWidth = screenWidth * 0.99
-                                    queuedItems[index].containerHeight = screenHeight * 0.1
-                                }
-                                .onTapGesture {
-                                    if modalActive {
-                                        queuedItems[index].containerWidth = screenWidth * 0.96
-                                        queuedItems[index].containerHeight = screenHeight * 0.2
-                                        modalActive = false
-                                        queuedItems[index].tapped = true
-                                    } else {
-                                        queuedItems[index].containerWidth = screenWidth * 0.99
-                                        queuedItems[index].containerHeight = screenHeight * 0.1
-                                        modalActive = true
-                                        queuedItems[index].tapped = false
-                                    }
-                                }
+                            display(containerWidth: Float(screenWidth) * 0.99, containerHeight: Float(screenHeight) * 0.1, tapped: $isTapped, title: queuedItems[index].title!, description: queuedItems[index].description!, backgroundColor: colorPicker(index: queuedItems[index].urgencyIndex!)).onTapGesture {
+                                isTapped.toggle()
+                            }
+                                
                         }
                     }
-                    .onAppear {
-                        
-                        let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(10), repeats: true) { _ in
-                                       startItemUpdateTimer()
-                                   }
-                        
-//                        let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(10, repeats: false) { _ in
-//
-//                        })
-                    }
-                    
+     
                     Spacer()
+                    
+                    //                    .onAppear {
+                    //
+                    //                        let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(10), repeats: true) { _ in
+                    //                                       startItemUpdateTimer()
+                    //                                   }
+                    //
+                    ////                        let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(10, repeats: false) { _ in
+                    ////
+                    ////                        })
+                    //                    }
+                                   
                         
                                                 // Update the queued items here
 //                                                for index in queuedItems.indices {
@@ -510,21 +510,11 @@ struct ContentView: View {
                 Button(action: {
                     isSheetPresented.toggle()
                     
-                    var queuedItem = QueuedItem(title: itemTitle, description: itemDescription, urgencyIndex: selectedUrgencyIndex, durationIndex: selectedDurationIndex)
-                    //queuedItem.prioritize()
-
-                    switch selectedUrgencyIndex {
-                        case 0:
-                            queuedItem.backgroundColor = urgentColor
-                        case 1:
-                          
-                            queuedItem.backgroundColor = semiUrgentColor
-                        case 2:
-                            
-                            queuedItem.backgroundColor = nonUrgentColor
-                        default:
-                            break
-                    }
+                    let queuedItem = QueuedItem(title: itemTitle, description: itemDescription, urgencyIndex: selectedUrgencyIndex, durationIndex: selectedDurationIndex, containerWidth: 0.0, containerHeight: 0.0)
+                    
+                    
+                    
+                    
                        
                     queuedItems.append(queuedItem)
                     
