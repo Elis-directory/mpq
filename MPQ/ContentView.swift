@@ -146,6 +146,7 @@ func display(containerWidth: Float, containerHeight: Float, tapped:  Binding<Boo
     }
 
 
+
 // class repesenting element in queue
 class QueuedItem {
     var title: String?
@@ -168,19 +169,30 @@ class QueuedItem {
         self.containerHeight = containerHeight
     }
     
-    func update() {
+    func update(seconds: TimeInterval) {
+        
+        
         switch urgencyIndex {
             case 0:
-                
-                    urgencyIndex = 1
-                
+                DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
+                    self.urgencyIndex = 1
+                    print("moving to yellow")
+                }
+                   
             case 1:
-                
-                    urgencyIndex = 2
+                DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
+                    self.urgencyIndex = 2
+                    print("moving to green")
+                }
+                  
+                    
                 
             case 2:
-              
+                DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
+                    
                     print("Done!")
+                }
+              
                 
             default:
                 break
@@ -374,7 +386,9 @@ struct ContentView: View {
     @State private var isTappedArray = Array(repeating: false, count: 12) // Assuming a default count
 
 
-   
+        
+            
+    
     
     // User View
     var body: some View {
@@ -385,6 +399,7 @@ struct ContentView: View {
                     .offset(y: screenHeight * -0.2)
                 
                 Text("Up to 12 items!")
+                
                 
                 VStack {
                     Rectangle()
@@ -401,7 +416,16 @@ struct ContentView: View {
                             display(containerWidth: Float(screenWidth) * 0.99, containerHeight: Float(screenHeight) * 0.1, tapped: $isTappedArray[index], title: queuedItems[index].title!, description: queuedItems[index].description!, backgroundColor: colorPicker(index: queuedItems[index].urgencyIndex!))
                                 
                         }
-                    }
+                        }.onAppear {
+                            // Create and start a timer to call the update function every 5 seconds
+                            Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { timer in
+                                DispatchQueue.main.async {
+                                    queuedItems.forEach { item in
+                                        item.update(seconds: 2)
+                                    }
+                                }
+                            }
+                        }
      
                     Spacer()
                  
@@ -506,6 +530,7 @@ struct ContentView: View {
                 Button(action: {
                     isSheetPresented.toggle()
                     
+                    
                     let queuedItem = QueuedItem(title: itemTitle, description: itemDescription, urgencyIndex: selectedUrgencyIndex, durationIndex: selectedDurationIndex, containerWidth: 0.0, containerHeight: 0.0)
                     
                     
@@ -521,6 +546,13 @@ struct ContentView: View {
                 })
             }
         }
+            //.onAppear {
+//            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+//                    queuedItems.forEach { item in
+//                        item.update(seconds: 5)
+//                    }
+//                }
+//    }
        
     }
    
