@@ -148,7 +148,7 @@ func display(containerWidth: Float, containerHeight: Float, tapped:  Binding<Boo
 
 
 // class repesenting element in queue
-class QueuedItem {
+@Observable class QueuedItem {
     var title: String?
     var description: String?
     var urgencyIndex: Int?
@@ -170,34 +170,33 @@ class QueuedItem {
     }
     
     func update(seconds: TimeInterval) {
+        var count = 0
         
-        
-        switch urgencyIndex {
+        Timer.scheduledTimer(withTimeInterval: seconds, repeats: true) { timer in
+            switch self.urgencyIndex {
             case 0:
-                DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
-                    self.urgencyIndex = 1
-                    print("moving to yellow")
-                }
-                   
+                self.urgencyIndex = 1
+                print("moving to yellow")
+                
             case 1:
-                DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
-                    self.urgencyIndex = 2
-                    print("moving to green")
-                }
-                  
-                    
+                self.urgencyIndex = 2
+                print("moving to green")
                 
             case 2:
-                DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
-                    
-                    print("Done!")
-                }
-              
+                print("Done!")
+                timer.invalidate() // Stop the timer when done
                 
             default:
                 break
+            }
+            
+            count += 1
+            if count >= 2 {
+                timer.invalidate()
+            }
         }
     }
+
     
 }
     
@@ -418,13 +417,13 @@ struct ContentView: View {
                         }
                         }.onAppear {
                             // Create and start a timer to call the update function every 5 seconds
-                            Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { timer in
-                                DispatchQueue.main.async {
-                                    queuedItems.forEach { item in
-                                        item.update(seconds: 2)
-                                    }
-                                }
-                            }
+//                            Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { timer in
+//                                DispatchQueue.main.async {
+//                                    queuedItems.forEach { item in
+//                                        item.update(seconds: 2)
+//                                    }
+//                                }
+//                            }
                         }
      
                     Spacer()
@@ -533,6 +532,7 @@ struct ContentView: View {
                     
                     let queuedItem = QueuedItem(title: itemTitle, description: itemDescription, urgencyIndex: selectedUrgencyIndex, durationIndex: selectedDurationIndex, containerWidth: 0.0, containerHeight: 0.0)
                     
+                    queuedItem.update(seconds: 5)
                     
                     
                     
