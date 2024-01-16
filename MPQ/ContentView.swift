@@ -171,18 +171,28 @@ func display(containerWidth: Float, containerHeight: Float, tapped:  Binding<Boo
     
     func update(seconds: TimeInterval) {
         var count = 0
+        var time = seconds
         
-        Timer.scheduledTimer(withTimeInterval: seconds, repeats: true) { timer in
+        switch self.urgencyIndex {
+           case 2:
+               time = seconds / 3
+           case 1:
+               time = seconds / 2
+           default:
+               break
+           }
+        
+        Timer.scheduledTimer(withTimeInterval: time, repeats: true) { timer in
             switch self.urgencyIndex {
-            case 0:
+            case 2:
                 self.urgencyIndex = 1
                 print("moving to yellow")
                 
             case 1:
-                self.urgencyIndex = 2
-                print("moving to green")
+                self.urgencyIndex = 0
+                print("moving to red")
                 
-            case 2:
+            case 0:
                 print("Done!")
                 timer.invalidate() // Stop the timer when done
                 
@@ -191,7 +201,7 @@ func display(containerWidth: Float, containerHeight: Float, tapped:  Binding<Boo
             }
             
             count += 1
-            if count >= 2 {
+            if count > 2 {
                 timer.invalidate()
             }
         }
@@ -372,15 +382,15 @@ struct ContentView: View {
    
     
     let urgencies = ["Urgent", "Semi-urgent", "Non-urgent"]
-    let durations = ["1 min", "3 hours", "6 hours", "12 hours", "24 hours"]
+    let durations = ["1 min", "3 min", "6 min", "12 min", "24 min"]
     
     
     var times = [
         "1 min": 60,
-        "3 hours": 180,
-        "6 hours": 360,
-        "12 hours": 720,
-        "24 hours": 1440
+        "3 min": 180,
+        "6 min": 360,
+        "12 min": 720,
+        "24 min": 1440
     ]
     @State private var isTappedArray = Array(repeating: false, count: 12) // Assuming a default count
 
@@ -409,7 +419,7 @@ struct ContentView: View {
                           }
                     
                     ScrollView {
-                        
+                       
                         ForEach(queuedItems.indices, id: \.self) { index in
                             
                             display(containerWidth: Float(screenWidth) * 0.99, containerHeight: Float(screenHeight) * 0.1, tapped: $isTappedArray[index], title: queuedItems[index].title!, description: queuedItems[index].description!, backgroundColor: colorPicker(index: queuedItems[index].urgencyIndex!))
@@ -523,16 +533,27 @@ struct ContentView: View {
                                
                     }
                     .padding()
-         
-            
+//                    let durations = ["1 min", "3 min", "6 min", "12 min", "24 min"]
+//                    
+//                    
+//                    var times = [
+//                        "1 min": 60,
+//                        "3 min": 180,
+//                        "6 min": 360,
+//                        "12 min": 720,
+//                        "24 min": 1440
+//                    ]
+//            
                 Spacer()
                 Button(action: {
                     isSheetPresented.toggle()
                     
                     
                     let queuedItem = QueuedItem(title: itemTitle, description: itemDescription, urgencyIndex: selectedUrgencyIndex, durationIndex: selectedDurationIndex, containerWidth: 0.0, containerHeight: 0.0)
+                    var duration = times[durations[selectedDurationIndex]]
                     
-                    queuedItem.update(seconds: 5)
+                    queuedItem.update(seconds: Double(duration!))
+                    queuedItems.sort { $0.urgencyIndex! < $1.urgencyIndex! }
                     
                     
                     
