@@ -9,9 +9,10 @@ import Foundation
 
 // UI color pallete
 var urgentColor = Color(hex: 0xE84258)
-var semiUrgentColor = Color(hex: 0xFEE191)
-var nonUrgentColor = Color(hex: 0xB0D8A4)
-var backgroundColor = Color(hex: 0xFCFCFC)
+var semiUrgentColor = Color(hex: 0xFFD700)
+var nonUrgentColor = Color(hex: 0x228B22)
+var backgroundColor = Color(hex: 0x333333)
+//var backgroundColor = Color(hex: 0xFCFCFC)
 
 // screen dimensions
 let screenWidth = UIScreen.main.bounds.size.width
@@ -91,7 +92,7 @@ func display(containerWidth: Float, containerHeight: Float, tapped:  Binding<Boo
                             .cornerRadius(6.0)
                            
                     VStack {
-                        StrokeText(text: title, width: 0.5, outerColor: .black, innerColor: Color(hex: 0xFCFCFC))
+                        StrokeText(text: title, width: 1.2, outerColor: .black, innerColor: .white)
                             .font(.largeTitle)
                             .multilineTextAlignment(.leading)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -129,7 +130,7 @@ func display(containerWidth: Float, containerHeight: Float, tapped:  Binding<Boo
                         .foregroundColor(backgroundColor)
                         .cornerRadius(6.0)
                        
-                    StrokeText(text: title, width: 0.5, outerColor: .black, innerColor: Color(hex: 0xFCFCFC))
+                    StrokeText(text: title, width: 1.2, outerColor: .black, innerColor: .white)
                         .font(.largeTitle)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -257,7 +258,7 @@ struct ContentView: View {
     var body: some View {
         
             ZStack {
-                Image("Logo").resizable()
+                Image("Logo3").resizable()
                     .frame(width: screenWidth, height: screenHeight * 0.4)
                     .offset(y: screenHeight * -0.2)
                 
@@ -279,6 +280,9 @@ struct ContentView: View {
                             display(containerWidth: Float(screenWidth) * 0.99, containerHeight: Float(screenHeight) * 0.1, tapped: $isTappedArray[index], title: queuedItems[index].title!, description: queuedItems[index].description!, backgroundColor: colorPicker(index: queuedItems[index].urgencyIndex!))
                                 
                         }
+                    } .onReceive(Timer.publish(every: 1.0 / 60.0, on: .main, in: .common).autoconnect()) { _ in
+                        // Code to execute before each frame update
+                        queuedItems.sort { $0.urgencyIndex! < $1.urgencyIndex! }
                     }
      
                     Spacer()
@@ -288,6 +292,7 @@ struct ContentView: View {
                     }) {
                         Image(systemName: "plus.app.fill")
                             .font(.system(size: 60))
+                            .foregroundColor( Color(hex: 0x50C878))
                     }
                     .padding()
                 }
@@ -295,7 +300,13 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(backgroundColor)
-            .sheet(isPresented: $isSheetPresented) {
+            .sheet(isPresented: $isSheetPresented, onDismiss: {
+                // Reset or clear content here
+                itemTitle = ""
+                itemDescription = ""
+                selectedUrgencyIndex = 0
+                selectedDurationIndex = 0
+            }) {
                 VStack {
                     TextField("Title", text: $itemTitle).font(.system(size: 30)).padding()
                 
@@ -385,7 +396,7 @@ struct ContentView: View {
                     
                     
                     let queuedItem = QueuedItem(title: itemTitle, description: itemDescription, urgencyIndex: selectedUrgencyIndex, durationIndex: selectedDurationIndex, containerWidth: 0.0, containerHeight: 0.0)
-                    var duration = times[durations[selectedDurationIndex]]
+                    let duration = times[durations[selectedDurationIndex]]
                     
                     queuedItem.update(seconds: Double(duration!))
         
@@ -393,7 +404,7 @@ struct ContentView: View {
                     queuedItems.append(queuedItem)
                     queuedItems.sort { $0.urgencyIndex! < $1.urgencyIndex! }
                     
-                    
+                    //isSheetPresented.
                 }, label: {
                     Image(systemName: "chevron.up.circle.fill")
                         .font(.system(size: 60))
