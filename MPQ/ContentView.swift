@@ -7,7 +7,6 @@ import SwiftUI
 import Foundation
 
 
-
 // UI color pallete
 var urgentColor = Color(hex: 0xE84258)
 var semiUrgentColor = Color(hex: 0xFEE191)
@@ -209,152 +208,7 @@ func display(containerWidth: Float, containerHeight: Float, tapped:  Binding<Boo
 
     
 }
-    
-    //    mutating func update() {
-    //
-    //            switch urgencyIndex {
-    //            case 0:
-    //                alarm = times[durations[durationIndex]]! / 3
-    //                if checkTimeUp(minutes: Double(alarm)) {
-    //                    urgencyIndex = 1
-    //                }
-    //            case 1:
-    //                alarm = times[durations[durationIndex]]! / 2
-    //                if checkTimeUp(minutes: Double(alarm)) {
-    //                    urgencyIndex = 2
-    //                }
-    //            case 2:
-    //                print("checking green")
-    //                alarm = times[durations[durationIndex]]!
-    //                print(alarm)
-    //                if checkTimeUp(minutes: Double(alarm)) {
-    //                    print("Done!")
-    //                }
-    //            default:
-    //                break
-    //            }
-    //        }
-    
-    
-    
-    
-    
-    //    mutating func prioritize() {
-    //        if(urgencyIndex == 0) {
-    //            alarm = times[durations[durationIndex]]! / 3
-    //            if (checkTimeUp(minutes: Double(alarm))) {
-    //                urgencyIndex = 1
-    //            }
-    //
-    //
-    //
-    //        }
-    //
-    //        if(urgencyIndex == 1) {
-    //            alarm = times[durations[durationIndex]]! / 2
-    //            if (checkTimeUp(minutes: Double(alarm))) {
-    //                urgencyIndex = 2
-    //            }
-    //        }
-    //
-    //        if(urgencyIndex == 2) {
-    //            alarm = times[durations[durationIndex]]!
-    //            if(checkTimeUp(minutes: Double(alarm))) {
-    //                title = "Done"
-    //            }
-    //
-    //        }
-    //    }
-    
-//    func startItemUpdateTimer() {
-//            print("timer starting")
-//            // Update the queued items here
-//            for index in queuedItems.indices {
-//                print("looping")
-//                switch queuedItems[index].urgencyIndex {
-//                case 0:
-//                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 3)), repeats: false) { _ in
-//                        queuedItems[index].urgencyIndex = 1
-//                    }
-//                    // Store the timer in case you need to invalidate it later
-//                    // You might want to store the timers in an array if needed
-//                case 1:
-//                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 2)), repeats: false) { _ in
-//                        queuedItems[index].urgencyIndex = 2
-//                    }
-//                case 2:
-//                    print("checking green")
-//                    let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]!)), repeats: false) { _ in
-//                        print("Done!")
-//                    }
-//                default:
-//                    break
-//                }
-//                // Store the timers if needed
-//            }
-//        }
-    
 
-
-
-//                    .onAppear {
-//
-//                        let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(10), repeats: true) { _ in
-//                                       startItemUpdateTimer()
-//                                   }
-//
-////                        let timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(10, repeats: false) { _ in
-////
-////                        })
-//                    }
-               
-    
-                            // Update the queued items here
-//                                                for index in queuedItems.indices {
-//
-//                                                    switch queuedItems[index].urgencyIndex {
-//                                                    case 0:
-//                                                        var timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 3)), repeats: false) { _ in
-//                                                            queuedItems[index].urgencyIndex = 1
-//                                                        }
-//
-////                                                        alarm =
-////                                                        if checkTimeUp(minutes: Double(alarm)) {
-////
-////                                                        }
-//                                                    case 1:
-//                                                        var timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]! / 2)), repeats: false) { _ in
-//                                                            queuedItems[index].urgencyIndex = 2
-//                                                        }
-//                                                    case 2:
-//                                                        print("checking green")
-//                                                        var timer = Timer.scheduledTimer(withTimeInterval: TimeInterval((times[durations[queuedItems[index].durationIndex]]!)), repeats: false) { _ in
-//
-//                                                            print("Done!")
-//                                                        }
-////
-////                                                        alarm = times[durations[queuedItems[index].durationIndex]]!
-////                                                        print(alarm)
-////                                                        if checkTimeUp(minutes: Double(alarm)) {
-////                                                            print("Done!")
-////                                                        }
-//                                                    default:
-//                                                        break
-//                                                    }
-//
-//
-//                                            }
-                 //   }
-//                        .onAppear {
-//                        var timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-//                            // Update the queued items here
-//                            for index in queuedItems.indices {
-//                                   queuedItems[index].update()
-//                               }
-//                        }
-//                    }
-
-    
         
 
 
@@ -425,16 +279,7 @@ struct ContentView: View {
                             display(containerWidth: Float(screenWidth) * 0.99, containerHeight: Float(screenHeight) * 0.1, tapped: $isTappedArray[index], title: queuedItems[index].title!, description: queuedItems[index].description!, backgroundColor: colorPicker(index: queuedItems[index].urgencyIndex!))
                                 
                         }
-                        }.onAppear {
-                            // Create and start a timer to call the update function every 5 seconds
-//                            Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { timer in
-//                                DispatchQueue.main.async {
-//                                    queuedItems.forEach { item in
-//                                        item.update(seconds: 2)
-//                                    }
-//                                }
-//                            }
-                        }
+                    }
      
                     Spacer()
                  
@@ -533,17 +378,7 @@ struct ContentView: View {
                                
                     }
                     .padding()
-//                    let durations = ["1 min", "3 min", "6 min", "12 min", "24 min"]
-//                    
-//                    
-//                    var times = [
-//                        "1 min": 60,
-//                        "3 min": 180,
-//                        "6 min": 360,
-//                        "12 min": 720,
-//                        "24 min": 1440
-//                    ]
-//            
+          
                 Spacer()
                 Button(action: {
                     isSheetPresented.toggle()
@@ -553,12 +388,10 @@ struct ContentView: View {
                     var duration = times[durations[selectedDurationIndex]]
                     
                     queuedItem.update(seconds: Double(duration!))
-                    queuedItems.sort { $0.urgencyIndex! < $1.urgencyIndex! }
-                    
-                    
-                    
+        
                        
                     queuedItems.append(queuedItem)
+                    queuedItems.sort { $0.urgencyIndex! < $1.urgencyIndex! }
                     
                     
                 }, label: {
@@ -567,14 +400,7 @@ struct ContentView: View {
                 })
             }
         }
-            //.onAppear {
-//            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-//                    queuedItems.forEach { item in
-//                        item.update(seconds: 5)
-//                    }
-//                }
-//    }
-       
+
     }
    
 }
