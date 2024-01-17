@@ -29,6 +29,11 @@ This SwiftUI-based app manages a queue of items with various properties such as 
 - The app supports customization of queue items based on urgency and duration.
 - Modifications and enhancements can be made as needed to extend its functionality or UI.
 ## Preview
-<img width="236" alt="Screenshot 2024-01-06 at 9 53 58 PM" src="https://github.com/Elis-directory/mpq/assets/150942395/1ae12cc0-a170-47ba-b80f-ad51123e0f67">
+
+<img width="1436" alt="t1" src="https://github.com/Elis-directory/mpq/assets/150942395/a9d47477-0e43-4921-90e3-972715e6f596">
+<br>
+<br>
+<img width="1433" alt="t2" src="https://github.com/Elis-directory/mpq/assets/150942395/6e05d6b5-d691-46a4-bbc1-134382d9dbd3">
+
 
 
